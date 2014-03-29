@@ -15,18 +15,38 @@
 (def tetrominoes [:i :o :t :s :z :j :l])
 
 (def tetromino-shapes {
-    :i '("0000" "1111")
-    :o '("0110" "0110")
-    :t '("0010" "1110")
-    :s '("0110" "1100")
-    :z '("1100" "0110")
-    :j '("1000" "1110")
-    :l '("0010" "1110")
+    :i '(
+         "    "
+         "iiii")
+    :o '(
+         " oo "
+         " oo ")
+    :t '(
+         "  t "
+         "ttt ")
+    :s '(
+         " ss "
+         "ss  ")
+    :z '(
+         "zz  "
+         " zz ")
+    :j '(
+         "j   "
+         "jjj ")
+    :l '(
+         "  l "
+         "lll ")
   })
-
-(defn empty-cell-as-html [] (dom/td #js {:className "cell empty"}))
-(defn block-as-html [] (dom/td #js {:className "cell block"}))
-(defn cell-as-html [cell] (if (= cell "1") (block-as-html) (empty-cell-as-html)))
+(defn cell-as-html [cell]
+    (case cell
+      " " (dom/td #js {:className "cell cell-empty"})
+      "i" (dom/td #js {:className "cell cell-i"})
+      "o" (dom/td #js {:className "cell cell-o"})
+      "t" (dom/td #js {:className "cell cell-t"})
+      "s" (dom/td #js {:className "cell cell-s"})
+      "z" (dom/td #js {:className "cell cell-z"})
+      "j" (dom/td #js {:className "cell cell-j"})
+      "l" (dom/td #js {:className "cell cell-l"})))
 (defn row-as-html [row] (apply dom/tr nil (map cell-as-html row)))
 
 (defn print-tetromino [tetromino]
@@ -39,6 +59,8 @@
         (apply dom/table #js {:className "tetromino"} (map row-as-html ((:tetromino app) tetromino-shapes))))))
 
 (def app-state (atom {:tetromino (rand-nth tetrominoes)}))
+
+
 
 (om/root
   tetromino-elem

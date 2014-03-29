@@ -2,6 +2,24 @@
   width: 20px;
   height: 20px;
 }
-.block {
-  background-color: #f00;
+.cell-i {
+  background-color: lightblue;
+}
+.cell-o {
+  background-color: brown;
+}
+.cell-t {
+  background-color: purple;
+}
+.cell-s {
+  background-color: green;
+}
+.cell-z {
+  background-color: red;
+}
+.cell-j {
+  background-color: blue;
+}
+.cell-l {
+  background-color: orange;
 }
