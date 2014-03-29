@@ -7,11 +7,6 @@
             [cljs.core.async :refer [<! put! chan]]
             [clojure.string :as string]))
 
-;(use '[clojure.string :only (join split)])
-
-;#{:i, :o, :t, :s, :z, :j, :l}
-
-
 (def tetrominoes [:i :o :t :s :z :j :l])
 
 (def tetromino-shapes {
@@ -52,18 +47,68 @@
 (defn print-tetromino [tetromino]
   (string/join (tetromino tetromino-shapes)))
 
-(defn tetromino-elem [app]
+(defn tetromino-elem [tetromino]
+  (apply dom/table #js {:className "tetromino"}
+    (map row-as-html (tetromino tetromino-shapes))))
+
+(def empty-play-field '(
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        "          "
+                        ))
+(defn put-piece-to-row [cells piece-cells x]
+  (concat (take x cells) piece-cells (drop (+ x 4) cells)))
+(defn put-piece-to-rows [rows piece-rows x]
+  (map put-piece-to-row rows piece-rows [x x]))
+(defn put-piece-into-field [rows piece x y]
+  (concat (take y rows) (put-piece-to-rows (take 2 (drop y rows)) (piece tetromino-shapes) x) (drop (+ y 2) rows)))
+(defn play-field-elem [app]
+  (def play-field (:play-field app))
+  (def current-piece (:current-piece app))
+  (def current-piece-x (:current-piece-x app))
+  (def current-piece-y (:current-piece-y app))
+  (apply dom/table #js {:className "playField"}
+         (map row-as-html
+           (put-piece-into-field play-field current-piece current-piece-x current-piece-y))))
+
+(def app-state (atom {
+                 :play-field empty-play-field
+                 :next-piece (rand-nth tetrominoes)
+                 :current-piece (rand-nth tetrominoes)
+                 :current-piece-x 4
+                 :current-piece-y 0
+               }))
+
+(defn next-piece-elem [next-piece]
+  (dom/div #js {:className "nextPiece"} (tetromino-elem next-piece)))
+
+(defn render-app [app]
   (reify
     om/IRender
     (render [this]
-        (apply dom/table #js {:className "tetromino"} (map row-as-html ((:tetromino app) tetromino-shapes))))))
-
-(def app-state (atom {:tetromino (rand-nth tetrominoes)}))
-
-
+      (dom/div nil
+        (play-field-elem app)
+        (next-piece-elem (:next-piece app))))))
 
 (om/root
-  tetromino-elem
+  render-app
   app-state
   {:target (. js/document (getElementById "tetris"))})
 

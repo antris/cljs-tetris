@@ -1,3 +1,12 @@
+.playField {
+  border: 1px solid lightgrey;
+  float: left;
+  margin: 20px;
+}
+.nextPiece {
+  float: left;
+  margin: 20px;
+}
 .cell {
   width: 20px;
   height: 20px;
