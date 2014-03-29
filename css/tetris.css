@@ -1,0 +1,7 @@
+.cell {
+  width: 20px;
+  height: 20px;
+}
+.block {
+  background-color: #f00;
+}
