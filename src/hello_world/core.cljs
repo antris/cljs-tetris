@@ -99,16 +99,16 @@
 (defn next-piece-elem [next-piece]
   (dom/div #js {:className "nextPiece"} (tetromino-elem next-piece)))
 
-(defn render-app [app]
+(defn app [state]
   (reify
     om/IRender
     (render [this]
       (dom/div nil
-        (play-field-elem app)
-        (next-piece-elem (:next-piece app))))))
+        (play-field-elem state)
+        (next-piece-elem (:next-piece state))))))
 
 (om/root
-  render-app
+  app
   app-state
   {:target (. js/document (getElementById "tetris"))})
 
