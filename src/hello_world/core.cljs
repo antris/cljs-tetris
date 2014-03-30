@@ -90,6 +90,17 @@
         (play-field-elem state)
         (next-piece-elem (:next-piece state))))))
 
+(defn update-state [state]
+  (swap! app-state assoc :current-piece-y (+ 1 (:current-piece-y state))))
+
+(declare game-loop)
+(defn game-loop [state]
+    (js/setTimeout
+      (fn [] (game-loop (update-state state)))
+      500))
+
+(game-loop app-state)
+
 (om/root
   app
   app-state
