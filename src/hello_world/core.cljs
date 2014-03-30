@@ -59,7 +59,7 @@
 (defn put-piece-to-row [cells piece-cells x]
   (concat (take x cells) piece-cells (drop (+ x (count piece-cells)) cells)))
 (defn put-piece-to-rows [rows piece-rows x]
-  (map put-piece-to-row rows piece-rows [x x]))
+  (map put-piece-to-row rows piece-rows (repeat (count rows) x)))
 (defn put-piece-into-field [rows piece x y]
   (def piece-rows (piece tetromino-shapes))
   (def piece-height (count piece-rows))
