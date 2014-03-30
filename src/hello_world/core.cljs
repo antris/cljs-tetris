@@ -134,7 +134,7 @@
       (fn [] (update-state) (game-loop))
       200))
 
-(game-loop app-state)
+(game-loop)
 
 (om/root
   app
