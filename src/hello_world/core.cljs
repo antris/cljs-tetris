@@ -57,11 +57,13 @@
 (def empty-play-field (repeat FIELD_HEIGHT (apply str (repeat FIELD_WIDTH " "))))
 
 (defn put-piece-to-row [cells piece-cells x]
-  (concat (take x cells) piece-cells (drop (+ x 4) cells)))
+  (concat (take x cells) piece-cells (drop (+ x (count piece-cells)) cells)))
 (defn put-piece-to-rows [rows piece-rows x]
   (map put-piece-to-row rows piece-rows [x x]))
 (defn put-piece-into-field [rows piece x y]
-  (concat (take y rows) (put-piece-to-rows (take 2 (drop y rows)) (piece tetromino-shapes) x) (drop (+ y 2) rows)))
+  (def piece-rows (piece tetromino-shapes))
+  (def piece-height (count piece-rows))
+  (concat (take y rows) (put-piece-to-rows (take piece-height (drop y rows)) piece-rows x) (drop (+ y piece-height) rows)))
 (defn play-field-elem [app]
   (def play-field (:play-field app))
   (def current-piece (:current-piece app))
