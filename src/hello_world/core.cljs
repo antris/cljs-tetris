@@ -10,27 +10,27 @@
 (def tetrominoes [:i :o :t :s :z :j :l])
 
 (def tetromino-shapes {
-    :i '(
+    :i [
          "    "
-         "iiii")
-    :o '(
+         "iiii"]
+    :o [
          " oo "
-         " oo ")
-    :t '(
+         " oo "]
+    :t [
          "  t "
-         "ttt ")
-    :s '(
+         "ttt "]
+    :s [
          " ss "
-         "ss  ")
-    :z '(
+         "ss  "]
+    :z [
          "zz  "
-         " zz ")
-    :j '(
+         " zz "]
+    :j [
          "j   "
-         "jjj ")
-    :l '(
+         "jjj "]
+    :l [
          "  l "
-         "lll ")
+         "lll "]
   })
 (defn cell-as-html [cell]
     (case cell
