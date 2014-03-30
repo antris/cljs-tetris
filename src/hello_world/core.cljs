@@ -105,18 +105,19 @@
 
 (events/listen js/document.body goog.events.EventType.KEYDOWN
     (fn [e] (let [current-x (:current-piece-x (deref app-state))]
+      (if (= (.-keyCode e) 40) (make-piece-fall (deref app-state)))
       (swap! app-state assoc :current-piece-x
         (case (.-keyCode e)
           37 (- current-x 1)
           39 (+ current-x 1)
           current-x)))))
 
-(defn update-state [state] (make-piece-fall state))
+(defn update-state [] (make-piece-fall (deref app-state)))
 
 (declare game-loop)
-(defn game-loop [state]
+(defn game-loop []
     (js/setTimeout
-      (fn [] (game-loop (update-state state)))
+      (fn [] (update-state) (game-loop))
       200))
 
 (game-loop app-state)
