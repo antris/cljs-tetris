@@ -92,14 +92,24 @@
         (play-field-elem state)
         (next-piece-elem (:next-piece state))))))
 
-(defn update-state [state]
-  (swap! app-state assoc :current-piece-y (+ 1 (:current-piece-y state))))
+(defn piece-cells [piece x y] (
+  (piece tetromino-shapes)))
+
+(defn make-piece-fall [state]
+  (def current-y (:current-piece-y state))
+  (def new-y (if (> current-y (- FIELD_HEIGHT 3))
+               current-y
+               (+ 1 current-y)
+               ))
+  (swap! app-state assoc :current-piece-y new-y))
+
+(defn update-state [state] (make-piece-fall state))
 
 (declare game-loop)
 (defn game-loop [state]
     (js/setTimeout
       (fn [] (game-loop (update-state state)))
-      500))
+      200))
 
 (game-loop app-state)
 
