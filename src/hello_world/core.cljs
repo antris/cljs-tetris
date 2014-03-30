@@ -103,6 +103,14 @@
                ))
   (swap! app-state assoc :current-piece-y new-y))
 
+(events/listen js/document.body goog.events.EventType.KEYDOWN
+    (fn [e] (let [current-x (:current-piece-x (deref app-state))]
+      (swap! app-state assoc :current-piece-x
+        (case (.-keyCode e)
+          37 (- current-x 1)
+          39 (+ current-x 1)
+          current-x)))))
+
 (defn update-state [state] (make-piece-fall state))
 
 (declare game-loop)
