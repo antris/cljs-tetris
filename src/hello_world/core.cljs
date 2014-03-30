@@ -92,8 +92,22 @@
         (play-field-elem state)
         (next-piece-elem (:next-piece state))))))
 
-(defn piece-cells [piece x y] (
-  (piece tetromino-shapes)))
+(defn get-cells-in-row [index, row]
+  (map #(vector % index) (map first (remove #(= (second %) " ") (map-indexed vector row)))))
+(defn piece-cells [piece] (apply concat (map-indexed get-cells-in-row (piece tetromino-shapes))))
+
+(defn within-play-field [x y]
+  (and
+   (and (>= x 0) (< x FIELD_WIDTH))
+   (and (>= y 0) (< y FIELD_HEIGHT)))
+  )
+
+(defn move-piece-if-legal [piece x y direction-x direction-y]
+  (let [cells (piece-cells piece)
+        moved-cells (map (fn [v] [(+ (first v) x direction-x) (+ (second v) y direction-y)]) cells)
+        all-within-play-field (every? #(apply within-play-field %) moved-cells)
+        ]
+     (if all-within-play-field moved-cells cells)))
 
 (defn make-piece-fall [state]
   (def current-y (:current-piece-y state))
