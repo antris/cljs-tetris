@@ -51,28 +51,11 @@
   (apply dom/table #js {:className "tetromino"}
     (map row-as-html (tetromino tetromino-shapes))))
 
-(def empty-play-field '(
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        "          "
-                        ))
+(def FIELD_HEIGHT 20)
+(def FIELD_WIDTH 10)
+
+(def empty-play-field (repeat FIELD_HEIGHT (apply str (repeat FIELD_WIDTH " "))))
+
 (defn put-piece-to-row [cells piece-cells x]
   (concat (take x cells) piece-cells (drop (+ x 4) cells)))
 (defn put-piece-to-rows [rows piece-rows x]
