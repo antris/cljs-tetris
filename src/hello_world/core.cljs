@@ -42,14 +42,14 @@
       "z" (dom/td #js {:className "cell cell-z"})
       "j" (dom/td #js {:className "cell cell-j"})
       "l" (dom/td #js {:className "cell cell-l"})))
-(defn row-as-html [row] (apply dom/tr nil (map cell-as-html row)))
+(defn row-as-html [row] (apply dom/tr nil (mapv cell-as-html row)))
 
 (defn print-tetromino [tetromino]
   (string/join (tetromino tetromino-shapes)))
 
 (defn tetromino-elem [tetromino]
   (apply dom/table #js {:className "tetromino"}
-    (map row-as-html (tetromino tetromino-shapes))))
+    (mapv row-as-html (tetromino tetromino-shapes))))
 
 (def FIELD_HEIGHT 20)
 (def FIELD_WIDTH 10)
@@ -59,7 +59,7 @@
 (defn put-piece-to-row [cells piece-cells x]
   (concat (take x cells) piece-cells (drop (+ x (count piece-cells)) cells)))
 (defn put-piece-to-rows [rows piece-rows x]
-  (map put-piece-to-row rows piece-rows (repeat (count rows) x)))
+  (mapv put-piece-to-row rows piece-rows (repeat (count rows) x)))
 (defn put-piece-into-field [rows piece x y]
   (def piece-rows (piece tetromino-shapes))
   (def piece-height (count piece-rows))
@@ -70,7 +70,7 @@
   (def current-piece-x (:current-piece-x app))
   (def current-piece-y (:current-piece-y app))
   (apply dom/table #js {:className "playField"}
-         (map row-as-html
+         (mapv row-as-html
            (put-piece-into-field play-field current-piece current-piece-x current-piece-y))))
 
 (def app-state (atom {
@@ -93,7 +93,7 @@
         (next-piece-elem (:next-piece state))))))
 
 (defn get-cells-in-row [index, row]
-  (map #(vector % index) (map first (remove #(= (second %) " ") (map-indexed vector row)))))
+  (mapv #(vector % index) (mapv first (remove #(= (second %) " ") (map-indexed vector row)))))
 (defn piece-cells [piece] (apply concat (map-indexed get-cells-in-row (piece tetromino-shapes))))
 
 (defn within-play-field [x y]
@@ -103,11 +103,16 @@
   )
 
 (defn move-piece-if-legal [piece x y direction-x direction-y]
-  (let [cells (piece-cells piece)
-        moved-cells (map (fn [v] [(+ (first v) x direction-x) (+ (second v) y direction-y)]) cells)
+  (let [
+        cells (piece-cells piece)
+        moved-cells (mapv (fn [v] [(+ (first v) x direction-x) (+ (second v) y direction-y)]) cells)
         all-within-play-field (every? #(apply within-play-field %) moved-cells)
         ]
-     (if all-within-play-field moved-cells cells)))
+     (if all-within-play-field
+       [piece (+ x direction-x) (+ y direction-y)]
+       [piece x y])))
+
+(move-piece-if-legal :z 0 0 -2 0)
 
 (defn make-piece-fall [state]
   (def current-y (:current-piece-y state))
@@ -118,13 +123,17 @@
   (swap! app-state assoc :current-piece-y new-y))
 
 (events/listen js/document.body goog.events.EventType.KEYDOWN
-    (fn [e] (let [current-x (:current-piece-x (deref app-state))]
+    (fn [e] (let [
+                  x (:current-piece-x (deref app-state))
+                  y (:current-piece-x (deref app-state))
+                  piece (:current-piece (deref app-state))
+                  ]
       (if (= (.-keyCode e) 40) (make-piece-fall (deref app-state)))
       (swap! app-state assoc :current-piece-x
         (case (.-keyCode e)
-          37 (- current-x 1)
-          39 (+ current-x 1)
-          current-x)))))
+          37 (nth (move-piece-if-legal piece x y -1 0) 1)
+          39 (nth (move-piece-if-legal piece x y 1 0) 1)
+          x)))))
 
 (defn update-state [] (make-piece-fall (deref app-state)))
 
