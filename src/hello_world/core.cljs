@@ -112,8 +112,6 @@
        [piece (+ x direction-x) (+ y direction-y)]
        [piece x y])))
 
-(move-piece-if-legal :z 0 0 -2 0)
-
 (defn make-piece-fall [state]
   (def current-y (:current-piece-y state))
   (def new-y (if (> current-y (- FIELD_HEIGHT 3))
